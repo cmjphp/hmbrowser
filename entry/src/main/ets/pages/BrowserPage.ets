@@ -13,8 +13,10 @@ import { promptAction } from '@kit.ArkUI';
 import { webview } from '@kit.ArkWeb';
 import { AddressBar } from '../components/AddressBar';
 import { BrowserToolbar } from '../components/BrowserToolbar';
+import { BookmarkPage } from './BookmarkPage';
 import { QuickLinks } from '../components/QuickLinks';
 import { TabBar } from '../components/TabBar';
+import { Bookmark } from '../model/Bookmark';
 import { BrowserSetting } from '../model/BrowserSetting';
 import { TabInfo } from '../model/BrowserTab';
 import { HistoryItem } from '../model/HistoryItem';
@@ -55,6 +57,8 @@ struct BrowserPage {
   @State private setting: BrowserSetting = BrowserSettingService.getDefaultSetting();
   /** 首页「最近访问」列表，取最近 8 条 */
   @State private recentHistory: HistoryItem[] = [];
+  /** 首页「我的收藏」列表，取最近 6 条 */
+  @State private recentBookmarks: Bookmark[] = [];
   /** 标记正在清空旧页面上下文，抑制中间 about:blank 事件 */
   private flushingContext: boolean = false;
   /** OAuth / window.open() 弹窗覆盖层 */
@@ -65,6 +69,8 @@ struct BrowserPage {
   @State private showSchemeConfirm: boolean = false;
   /** 待确认的自定义协议 URL */
   @State private pendingSchemeUrl: string = '';
+  /** 书签面板是否显示 */
+  @State private showBookmarks: boolean = false;
 
   // ========== 生命周期 ==========
 
@@ -82,6 +88,7 @@ struct BrowserPage {
     this.activeIndex = 0;
     this.syncFromTab(0);
     await this.refreshRecentHistory();
+    await this.refreshRecentBookmarks();
   }
 
   // ========== 导航方法 ==========
@@ -705,6 +712,7 @@ struct BrowserPage {
     this.canGoForward = false;
     // 刷新首页最近访问列表
     await this.refreshRecentHistory();
+    await this.refreshRecentBookmarks();
     try {
       this.controller.loadUrl('about:blank');
     } catch (error) {
@@ -777,6 +785,12 @@ struct BrowserPage {
     this.recentHistory = all.slice(0, 8);
   }
 
+  /** 刷新首页「我的收藏」列表（取最近 6 条） */
+  private async refreshRecentBookmarks(): Promise<void> {
+    const all = await BookmarkService.getBookmarks(this.abilityContext);
+    this.recentBookmarks = all.slice(0, 6);
+  }
+
   // ========== 书签操作 ==========
 
   private async toggleBookmark(): Promise<void> {
@@ -788,6 +802,7 @@ struct BrowserPage {
       this.currentTitle, this.currentUrl, this.abilityContext
     );
     this.isBookmarked = saved;
+    await this.refreshRecentBookmarks();
     promptAction.showToast({
       message: saved ? '已加入书签' : '已取消书签'
     });
@@ -1163,6 +1178,70 @@ struct BrowserPage {
                 }
               }
 
+              // 我的收藏（仅在书签时展示）
+              if (this.recentBookmarks.length > 0) {
+                Column() {
+                  Row() {
+                    Text('我的收藏')
+                      .fontSize(14)
+                      .fontWeight(FontWeight.Medium)
+                      .fontColor('#86909C')
+                    Blank()
+                    Text('查看全部')
+                      .fontSize(12)
+                      .fontColor('#0A59F7')
+                      .onClick(() => {
+                        this.showBookmarks = true;
+                      })
+                  }
+                  .width('100%')
+                  .margin({ top: 16, bottom: 10 })
+                  .padding({ left: 16, right: 16 })
+
+                  List({ space: 2 }) {
+                    ForEach(this.recentBookmarks, (item: Bookmark) => {
+                      ListItem() {
+                        Row() {
+                          // 左侧星标图标
+                          Text('★')
+                            .fontSize(13)
+                            .fontColor('#FF9500')
+                            .textAlign(TextAlign.Center)
+                            .width(32)
+                            .height(32)
+                            .borderRadius(8)
+                            .backgroundColor('#FFF8E8')
+                          // 标题和 URL
+                          Column() {
+                            Text(item.title || item.url)
+                              .fontSize(14)
+                              .fontColor('#1D2129')
+                              .maxLines(1)
+                              .textOverflow({ overflow: TextOverflow.Ellipsis })
+                            Text(item.url)
+                              .fontSize(11)
+                              .fontColor('#86909C')
+                              .maxLines(1)
+                              .textOverflow({ overflow: TextOverflow.Ellipsis })
+                              .margin({ top: 2 })
+                          }
+                          .alignItems(HorizontalAlign.Start)
+                          .margin({ left: 10 })
+                          .layoutWeight(1)
+                        }
+                        .width('100%')
+                        .padding({ left: 16, right: 16, top: 10, bottom: 10 })
+                      }
+                      .onClick(async () => {
+                        await this.loadUrl(item.url);
+                      })
+                    }, (item: Bookmark) => item.url)
+                  }
+                  .width('100%')
+                  .padding({ bottom: 16 })
+                }
+              }
+
               // 底部留白，避免被工具栏遮挡
               Blank().height(12)
             }
@@ -1232,7 +1311,7 @@ struct BrowserPage {
           await this.toggleBookmark();
         },
         onMenu: () => {
-          promptAction.showToast({ message: '菜单功能预留' });
+          this.showBookmarks = true;
         }
       })
 
@@ -1387,6 +1466,23 @@ struct BrowserPage {
         .position({ x: 0, y: 0 })
         .zIndex(200)
         .justifyContent(FlexAlign.Center)
+      }
+
+      // ---- 书签面板覆盖层 ----
+      if (this.showBookmarks) {
+        BookmarkPage({
+          onNavigate: async (url: string) => {
+            this.showBookmarks = false;
+            await this.loadUrl(url);
+          },
+          onClose: () => {
+            this.showBookmarks = false;
+          }
+        })
+        .width('100%')
+        .height('100%')
+        .position({ x: 0, y: 0 })
+        .zIndex(150)
       }
     }
     .width('100%')
