@@ -7,11 +7,11 @@
         "material": {
           "certpath": "/Users/chenmeijun/.ohos/config/default_hmbrowser_BpJ_40hYFF_VGj4TGR2uMHu2vNpbWfD0084XvweydA0=.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BEC37DF8C60C1D1F2E73F6E9948EDC558123A43C4D00C207C845D1D28960830E6DA8C8AB5F92134",
+          "keyPassword": "0000001BCFB714F2309D4E9E9423F9A604550032B8DA8D9A2867AC09EF1D17A1C994AAD8CAEB1668E5F6CD",
           "profile": "/Users/chenmeijun/.ohos/config/default_hmbrowser_BpJ_40hYFF_VGj4TGR2uMHu2vNpbWfD0084XvweydA0=.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "/Users/chenmeijun/.ohos/config/default_hmbrowser_BpJ_40hYFF_VGj4TGR2uMHu2vNpbWfD0084XvweydA0=.p12",
-          "storePassword": "0000001B35FA3B24B8A8ED568A724D842F7761CAC68E73279E84279F9A8D6CDAA0B318A8D47E625EE71974"
+          "storePassword": "0000001B85989EE73CAA7E188F071137C1A36CEDF1C8C823667FB814832F1235A5A61E6D751702BF1086D6"
         }
       }
     ],
@@ -19,7 +19,7 @@
       {
         "name": "default",
         "signingConfig": "default",
-        "compatibleSdkVersion": "5.0.0(12)",
+        "compatibleSdkVersion": "6.0.2(22)",
         "runtimeOS": "HarmonyOS",
         "targetSdkVersion": "6.0.2(22)"
       }

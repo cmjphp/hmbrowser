@@ -2,19 +2,19 @@
   "string": [
     {
       "name": "app_name",
-      "value": "HM Browser"
+      "value": "Harmony Browser"
     },
     {
       "name": "module_desc",
-      "value": "HarmonyOS NEXT browser MVP"
+      "value": "一款简洁高效的鸿蒙原生浏览器，支持多标签页、书签收藏、无痕浏览等功能，为您提供流畅安全的上网体验"
     },
     {
       "name": "EntryAbility_desc",
-      "value": "Browser entry ability"
+      "value": "Harmony Browser 主界面"
     },
     {
       "name": "EntryAbility_label",
-      "value": "HM Browser"
+      "value": "Harmony Browser"
     }
   ]
 }
