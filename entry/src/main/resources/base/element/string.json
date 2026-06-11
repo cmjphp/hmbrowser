@@ -1,0 +1,20 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "HM Browser"
+    },
+    {
+      "name": "module_desc",
+      "value": "HarmonyOS NEXT browser MVP"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Browser entry ability"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "HM Browser"
+    }
+  ]
+}

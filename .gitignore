@@ -1,0 +1,23 @@
+# HarmonyOS / DevEco Studio
+.idea/
+.gradle/
+.hvigor/
+build/
+oh_modules/
+entry/build/
+entry/.preview/
+*.iml
+local.properties
+
+# Node modules
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# CodeBuddy
+.codebuddy/
+
+# Logs
+*.log
